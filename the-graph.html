@@ -238,6 +238,10 @@
         'selectedNodesHashChanged(selectedNodesHash.splices)'
       ],
 
+      listeners: {
+        'track': 'onTrack'
+      },
+
       hostAttributes: {
         'touch-action': 'none'
       },
@@ -351,6 +355,11 @@
           this.selectedNodes = [item];
         }
         this.fire('nodes', this.selectedNodes);
+      },
+
+      onTrack: function(event) {
+        // Dont propagate beyond PolymerGestures scope
+        event.stopPropagation();
       },
 
       selectedNodesChanged: function (changeRecord) {
