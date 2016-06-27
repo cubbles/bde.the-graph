@@ -25,8 +25,8 @@
     <div id="svgcontainer"></div>
   </template>
 
-  <script src="../react/react.min.js"></script>
-  <script src="../react/react-dom.min.js"></script>
+  <script src="../react/react.js"></script>
+  <script src="../react/react-dom.js"></script>
   <script src="../klayjs-noflo/klay-noflo.js"></script>
   <script src="../hammerjs/hammer.min.js"></script>
   <script type="text/javascript" src="./lib/the-graph.js"></script>
@@ -271,6 +271,15 @@
         }
         // Listen for graph changes
         this.graph.on('endTransaction', this.fireChanged.bind(this));
+        // Fire polymer events
+        this.graph.on('addNode', this.fire.bind(this, 'the-graph-add-node'));
+        this.graph.on('removeNode', this.fire.bind(this, 'the-graph-remove-node'));
+        this.graph.on('addInport', this.fire.bind(this, 'the-graph-add-inport'));
+        this.graph.on('removeInport', this.fire.bind(this, 'the-graph-remove-inport'));
+        this.graph.on('addOutport', this.fire.bind(this, 'the-graph-add-outport'));
+        this.graph.on('removeOutport', this.fire.bind(this, 'the-graph-remove-outport'));
+        this.graph.on('addEdge', this.fire.bind(this, 'the-graph-add-edge'));
+        this.graph.on('removeEdge', this.fire.bind(this, 'the-graph-remove-edge'));
         // Listen for autolayout changes
         if (this.autolayout) {
           this.graph.on('addNode', this.triggerAutolayout.bind(this));
