@@ -208,7 +208,8 @@
           type: Object,
           value: function () {
             return {};
-          }
+          },
+          notify: true
         },
 
         snap: {
@@ -235,11 +236,12 @@
         'animatedEdgesChanged(animatedEdges.splices)',
         'selectedEdgesChanged(selectedEdges.splices)',
         'selectedNodesChanged(selectedNodes.splices)',
-        'selectedNodesHashChanged(selectedNodesHash.splices)'
+        'selectedNodesHashChanged(selectedNodesHash)'
       ],
 
       listeners: {
-        'track': 'onTrack'
+        'track': 'onTrack',
+        'tap': 'onTap'
       },
 
       hostAttributes: {
@@ -327,7 +329,7 @@
       onEdgeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
           if (this.selectedEdges.length > 0) {
-            this.selectedEdges = [];
+            this.splice('selectedEdges', 0, this.selectedEdges.length);
           }
           this.fire('edges', this.selectedEdges);
           return;
@@ -338,35 +340,42 @@
           var shallowClone = this.selectedEdges.slice();
           if (isSelected) {
             shallowClone.splice(index, 1);
-            this.selectedEdges = shallowClone;
+            this.set('selectedEdges', shallowClone);
           } else {
             shallowClone.push(item);
-            this.selectedEdges = shallowClone;
+            this.set('selectedEdges', shallowClone);
           }
         } else {
-          this.selectedEdges = [item];
+          this.splice('selectedEdges', 0, this.selectedEdges.length);
+          this.push('selectedEdges', item);
         }
         this.fire('edges', this.selectedEdges);
       },
 
       onNodeSelection: function (itemKey, item, toggle) {
         if (itemKey === undefined) {
-          this.selectedNodes = [];
+          this.splice('selectedNodes', 0, this.selectedNodes.length);
         } else if (toggle) {
           var index = this.selectedNodes.indexOf(item);
           var isSelected = index !== -1;
           if (isSelected) {
-            this.selectedNodes.splice(index, 1);
+            this.splice('selectedNodes', index, 1);
           } else {
-            this.selectedNodes.push(item);
+            this.push('selectedNodes', item);
           }
         } else {
-          this.selectedNodes = [item];
+          this.splice('selectedNodes', 0, this.selectedNodes.length);
+          this.push('selectedNodes', item);
         }
         this.fire('nodes', this.selectedNodes);
       },
 
       onTrack: function(event) {
+        // Dont propagate beyond PolymerGestures scope
+        event.stopPropagation();
+      },
+
+      onTap: function(event) {
         // Dont propagate beyond PolymerGestures scope
         event.stopPropagation();
       },
@@ -378,7 +387,8 @@
         for (var i = 0, len = this.selectedNodes.length; i < len; i++) {
           selectedNodesHash[this.selectedNodes[i].id] = true;
         }
-        this.selectedNodesHash = selectedNodesHash;
+        console.log('selectedNodesHash', selectedNodesHash);
+        this.set('selectedNodesHash', selectedNodesHash);
         this.fire('nodes', this.selectedNodes);
       },
 
@@ -561,10 +571,7 @@
 
       getPan: function () {
         if (!this.appView) {
-          return [
-            0,
-            0
-          ];
+          return [0, 0];
         }
         return [
           this.appView.state.x,
