@@ -252,7 +252,7 @@
         // Initializes the autolayouter
         this.autolayouter = klayNoflo.init({
           onSuccess: this.applyAutolayout.bind(this),
-          workerScript: '../bower_components/klayjs/klay.js'
+          workerScript: '../vendor/klayjs/klay.js'
         });
       },
 
@@ -295,7 +295,7 @@
         }
         if (this.appView) {
           // Remove previous instance
-          React.unmountComponentAtNode(this.$.svgcontainer);
+          ReactDOM.unmountComponentAtNode(this.$.svgcontainer);
         }
         // Setup app
         this.set('$.svgcontainer.innerHTML', '');
