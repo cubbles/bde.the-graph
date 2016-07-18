@@ -717,7 +717,8 @@
           }
           def = this.mergeComponentDefinition(component, definition);
         }
-        this.set('library' + ('.' + definition.name), def);
+        this.library[definition.name] = def;
+        this.notifyPath('library', this.library);
         // So changes are rendered
         this.debounceLibraryRefesh();
       },
