@@ -6,7 +6,7 @@
   <title>the-graph Demo</title>
 
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <script src="/build/noflo.min.js"></script>
+  <script src="/build/noflo.js"></script>
 
   <link rel="import" href="../../polymer/polymer.html">
   <link rel="import" href="../the-graph.html">
@@ -45,6 +45,10 @@
         throw new Error('Missing noflo dependency! Should be built with Component.io or Browserify to require it.');
     }
 
+    graph.getMenuDef = function () {
+      return {};
+    }
+
     function resize() {
       graph.setAttribute('width', window.innerWidth);
       graph.setAttribute('height', window.innerHeight);
@@ -52,10 +56,10 @@
     window.addEventListener('resize', resize);
     resize();
 
-    fetch('photobooth.json')
+    fetch('./photobooth.json')
       .then(res => res.json())
       .then(function(definition) {
-        noflo.graph.loadJSON(definition, function(nofloGraph) {
+        noflo.graph.loadJSON(definition, function(ignore, nofloGraph) {
           _buildInitialLibrary(nofloGraph);
           graph.set('graph', nofloGraph);
         })
